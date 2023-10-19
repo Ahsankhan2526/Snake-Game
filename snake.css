@@ -1,6 +1,33 @@
+body{
+    /* margin: 0 auto; */
+    margin: 20px;
+}
 .body-div{
     background-color: burlywood;
+    width: 1200px;
+    height: 600px;
+    background-image: url(./images/snake-bg.jpg);
+    background-size: 1200px 600px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.boundary{
+    border: 2px solid black;
+    width: 500px;
+    height: 500px;
+    margin-left: 100px;
+    position: relative;
+
 }
 h1{
+    padding-top: 20PX;
+    margin-left: 100px;
     color: darkblue;
+}
+.snake-dot {
+    background-color: black;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 1px solid #fff
 }
