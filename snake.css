@@ -13,8 +13,6 @@ body{
 }
 .boundary{
     border: 2px solid black;
-    width: 500px;
-    height: 500px;
     margin-left: 100px;
     position: relative;
 
@@ -23,11 +21,10 @@ h1{
     padding-top: 20PX;
     margin-left: 100px;
     color: darkblue;
+    display: inline;
 }
 .snake-dot {
     background-color: black;
     position: absolute;
-    width: 10px;
-    height: 10px;
     border: 1px solid #fff
 }

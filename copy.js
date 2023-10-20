@@ -9,6 +9,7 @@ let points = [
   { x: 200, y: 170 },
   { x: 200, y: 180 },
   { x: 200, y: 190 },
+  
 ];
 let boundary = document.querySelector(".boundary");
 function drawSnake(points) {
