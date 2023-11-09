@@ -10,25 +10,59 @@ boundary.style.width = default_boundaryDims.width + "px";
 boundary.style.height = default_boundaryDims.height + "px";
 
 //variables
+let upDown;
+let rightLeft;
 let interval;
+let currentDir;
+let gameHTML;
+let SnakeCellNum;
 
-function drawSnake(points) {
-  let snakePoint = "";
-
-  for (const point of points) {
-    snakePoint += `<span class="snake-dot" style="bottom:${point.y}px;left:${point.x}px;width:${cellSize}px;height:${cellSize}px"></span>`;
-  }
-  boundary.innerHTML = snakePoint;
+let beadPointsGenerator = () => {
+  bead = {
+    x: Math.floor(Math.random() * 50) * 10,
+    y: Math.floor(Math.random() * 50) * 10,
+  };
+  return bead;
+};
+let beadDot;
+function getBeadHtml() {
+  beadDot = beadPointsGenerator();
+  return `<span class="bead" style="left:${bead.x}px ;bottom:${bead.y}px; "></span>`;
 }
-drawSnake(points);
+let callingBead = getBeadHtml();
 
-function move(points, dir) {
-  let prev = { ...points[0] };
+function drawSnake() {
+  let snakeHtml = "";
+  SnakeCellNum = 1;
+  for (const point of points) {
+    snakeHtml += `<span class="snake-dot" style="left:${point.x}px;
+    bottom:${point.y}px;width:${cellSize}px;height:${cellSize}px">
+    ${SnakeCellNum++}</span>`;
+  }
+  snakeHtml += callingBead;
+  gameHTML = snakeHtml;
+  boundary.innerHTML = gameHTML;
+}
+drawSnake();
+let ref = {};
+
+function move(dir) {
+  // updating next to the previous cell
+  for (let i = points.length - 1; i >= 1; i--) {
+    points[i].x = points[i - 1].x;
+    points[i].y = points[i - 1].y;
+  }
+
+  //update next location of head
   switch (dir) {
     case "right":
+      // points[0].x +=
+      //   points[0].x >= default_boundaryDims.width-cellSize ? -default_boundaryDims.width + cellSize : cellSize;
       points[0].x += cellSize;
       break;
     case "left":
+      // points[0].x -=
+      //   points[0].x <= 0 ? -default_boundaryDims.width + cellSize : cellSize;
       points[0].x -= cellSize;
       break;
     case "up":
@@ -38,21 +72,36 @@ function move(points, dir) {
       points[0].y -= cellSize;
       break;
   }
-  for (let i = 1; i < points.length; i++) {
-    const temp = { ...points[i] };
-    points[i].x = prev.x;
-    points[i].y = prev.y;
-    prev = temp;
+  // *-*-* for transparent boundaries *-*-*
+  for (const key in points[0]) {
+    const val = points[0][key];
+    if (val < 0) {
+      points[0][key] = default_boundaryDims.width + val;
+    } else if (val > 490) {
+      points[0][key] = points[0][key] % default_boundaryDims.width;
+    }
   }
-  return points;
+
+  // *-*-* after snake eat bead *-*-*
+  if (bead.x === points[0].x && bead.y === points[0].y) {
+    callingBead = getBeadHtml();
+    // console.log("a");
+    ref = {...(points[(points.length)-1])}
+    points.push(ref)
+    // if(){}
+    // console.log(points[(points.length)-1]);
+  }
 }
 
 function moveDir(dir) {
-  move(points, dir);
-  drawSnake(points);
+  move(dir);
+  drawSnake();
+  // console.log(beadDot);
+  // console.log(ref);
+  // console.log('a');
 }
-
-function startGame() {
+currentDir = "up";
+function start_pause() {
   if (interval) {
     //running
     startBtn.innerHTML = "Start";
@@ -63,12 +112,12 @@ function startGame() {
     startBtn.innerHTML = "Pause";
     interval = setInterval(() => {
       moveDir(currentDir);
-    }, speed * 10);
+    }, speed);
   }
 }
 
-let upDown = true;
-let rightLeft = true;
+upDown = true;
+rightLeft = true;
 document.addEventListener("keydown", (event) => {
   //if arrow up key is pressed
   let key = event.code;
@@ -76,8 +125,7 @@ document.addEventListener("keydown", (event) => {
     currentDir = "up";
     upDown = false;
     rightLeft = true;
-  }
-  if (upDown === true && key === "ArrowDown") {
+  } else if (upDown === true && key === "ArrowDown") {
     currentDir = "down";
     upDown = false;
     rightLeft = true;
@@ -90,6 +138,7 @@ document.addEventListener("keydown", (event) => {
     upDown = true;
     rightLeft = false;
   }
+  if (event.code === "Space") {
+    start_pause();
+  }
 });
-
-let currentDir = "up";
