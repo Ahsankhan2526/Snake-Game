@@ -4,10 +4,10 @@ body{
 }
 .body-div{
     background-color: burlywood;
-    width: 1200px;
+    width: 1000px;
     height: 600px;
     background-image: url(./images/snake-bg.jpg);
-    background-size: 1200px 600px;
+    background-size: 1000px 600px;
     background-repeat: no-repeat;
     background-position: center;
 }

@@ -1,6 +1,6 @@
 //query selectors
 const boundary = document.querySelector(".boundary");
-const startBtn = document.querySelector("#start-pause");
+let startBtn = document.querySelector("#start-pause");
 
 //set defaults
 let points = default_points;
@@ -24,11 +24,23 @@ let beadPointsGenerator = () => {
   };
   return bead;
 };
+
 let beadDot;
 function getBeadHtml() {
-  beadDot = beadPointsGenerator();
+  let isOverLap;
+  do {
+    isOverLap = false;
+    beadDot = beadPointsGenerator();
+    for (let i = 0; i < points.length; i++) {
+      if (beadDot.x === points[i].x && beadDot.y === points[i].y) {
+        console.log("overlap");
+        isOverLap = true;
+      }
+    }
+  } while (isOverLap === true);
   return `<span class="bead" style="left:${bead.x}px ;bottom:${bead.y}px; "></span>`;
 }
+
 let callingBead = getBeadHtml();
 
 function drawSnake() {
@@ -47,6 +59,17 @@ drawSnake();
 let ref = {};
 
 function move(dir) {
+  // if sanke Head touches itself ??
+  for (let i = 1; i < points.length; i++) {
+    if (points[0].x === points[i].x && points[0].y === points[i].y) {
+    clearInterval(interval);
+    startBtn.setAttribute('disabled', 'disabled')
+    points[0] = null
+    startBtn = null;
+    alert('out');
+    }
+  }
+
   // updating next to the previous cell
   for (let i = points.length - 1; i >= 1; i--) {
     points[i].x = points[i - 1].x;
@@ -83,24 +106,19 @@ function move(dir) {
   }
 
   // *-*-* after snake eat bead *-*-*
-  if (bead.x === points[0].x && bead.y === points[0].y) {
+  if (beadDot.x === points[0].x && beadDot.y === points[0].y) {
+    ref = { ...points[points.length - 1] };
+    points.push(ref);
     callingBead = getBeadHtml();
-    // console.log("a");
-    ref = {...(points[(points.length)-1])}
-    points.push(ref)
-    // if(){}
-    // console.log(points[(points.length)-1]);
   }
 }
 
 function moveDir(dir) {
   move(dir);
   drawSnake();
-  // console.log(beadDot);
-  // console.log(ref);
-  // console.log('a');
 }
 currentDir = "up";
+
 function start_pause() {
   if (interval) {
     //running
@@ -125,6 +143,7 @@ document.addEventListener("keydown", (event) => {
     currentDir = "up";
     upDown = false;
     rightLeft = true;
+    // console.log(JSON.stringify(points));
   } else if (upDown === true && key === "ArrowDown") {
     currentDir = "down";
     upDown = false;
@@ -138,7 +157,7 @@ document.addEventListener("keydown", (event) => {
     upDown = true;
     rightLeft = false;
   }
-  if (event.code === "Space") {
+  if (key === "Space") {
     start_pause();
   }
 });
